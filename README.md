@@ -23,9 +23,8 @@ try **"python3 image_resize.py"** and enter the keys.
 * **-W, --result_width** Result image width
 * **-S, --scale** Result image scale
 
- **_If you enter scale, the height and width will be ignored_**<br>
- **_if you enter only width, or only height, other value will calculate
- automatically with initial image proportions_**
+**_if you enter only width, or only height, other value will calculate
+automatically with initial image proportions_**
 
 #### Example to run
 
