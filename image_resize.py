@@ -19,9 +19,9 @@ def get_args():
     args = parser.parse_args()
     if args.scale and (args.result_height or args.result_width):
         raise parser.error('Enter only scala or size')
-    if args.scale is None and args.result_height is None \
-            and args.result_width is None:
-        raise parser.error('You have not entered the size or scale')
+    if args.result_height is None and args.result_width is None:
+        if args.scale is None:
+            raise parser.error('You have not entered the size or scale')
     return args
 
 
@@ -33,13 +33,10 @@ def open_image(image_path):
         return None
 
 
-def get_path_to_result(path_to_original,
-                       path_to_result,
-                       result_height,
-                       result_width):
+def get_path_to_result(
+        path_to_original, path_to_result, result_height, result_width):
     file_path, full_file_name = os.path.split(path_to_original)
-    file_name = full_file_name[:full_file_name.rindex('.')]
-    file_format = full_file_name[full_file_name.rindex('.'):]
+    file_name, file_format = os.path.splitext(full_file_name)
     if path_to_result:
         result_path = os.path.join(path_to_result, full_file_name)
     else:
@@ -51,13 +48,15 @@ def get_path_to_result(path_to_original,
 
 
 def get_resized_image(image, result_width, result_height):
-    resized_image = image.resize((result_width, result_height),
-                                 Image.ANTIALIAS)
+    resized_image = image.resize(
+        (result_width, result_height),
+        Image.ANTIALIAS
+    )
     return resized_image
 
 
-def get_new_size(original_height, original_width, result_height, result_width,
-                 scale):
+def get_new_size(
+        original_height, original_width, result_height, result_width, scale):
     if result_height and not result_width:
         result_width = int(result_height * original_width / original_height)
     if result_width and not result_height:
@@ -75,22 +74,22 @@ def main():
         exit('Bad path or image name, please check path original image')
     original_width, original_height = image.size
     size = get_new_size(
-        original_height=original_height,
-        original_width=original_width,
-        result_height=args.result_height,
-        result_width=args.result_width,
-        scale=args.scale,
+        original_height,
+        original_width,
+        args.result_height,
+        args.result_width,
+        args.scale,
     )
     path_to_result = get_path_to_result(
-        path_to_original=args.path_to_original,
-        path_to_result=args.path_to_result,
-        result_height=size['result_height'],
-        result_width=size['result_width'],
+        args.path_to_original,
+        args.path_to_result,
+        size['result_height'],
+        size['result_width'],
     )
     resized_image = get_resized_image(
         image,
-        result_width=size['result_width'],
-        result_height=size['result_height'],
+        size['result_width'],
+        size['result_height'],
     )
     resized_image.save(path_to_result)
 
